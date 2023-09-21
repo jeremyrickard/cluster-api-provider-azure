@@ -110,9 +110,11 @@ spec:
 
         systemctl stop kubelet
         declare -a BINARIES=("kubeadm" "kubectl" "kubelet")
+        az login --identity
         for BINARY in "$${BINARIES[@]}"; do
           echo "* installing package: $${BINARY} ${KUBE_GIT_VERSION}"
-          curl --retry 10 --retry-delay 5 "https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${JOB_NAME}/${KUBE_GIT_VERSION}/bin/linux/amd64/$${BINARY}" --output "/usr/bin/$${BINARY}"
+          az storage blob download --blob-url "https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${JOB_NAME}/${KUBE_GIT_VERSION}/bin/linux/amd64/$${BINARY}" -f "/usr/bin/$${BINARY}" --auth-mode login
+          # curl --retry 10 --retry-delay 5 "https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${JOB_NAME}/${KUBE_GIT_VERSION}/bin/linux/amd64/$${BINARY}" --output "/usr/bin/$${BINARY}"
         done
         systemctl restart kubelet
 
@@ -193,6 +195,9 @@ spec:
       - diskSizeGB: 256
         lun: 0
         nameSuffix: etcddisk
+      identity: UserAssigned
+        userAssignedIdentities:
+        - providerID: /subscriptions/${AZURE_SUBSCRIPTION_ID}/resourceGroups/${CI_RG:=capz-ci}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${USER_IDENTITY:=cloud-provider-user-identity}
       image:
         marketplace:
           offer: capi
@@ -239,6 +244,9 @@ metadata:
 spec:
   template:
     spec:
+      identity: UserAssigned
+        userAssignedIdentities:
+        - providerID: /subscriptions/${AZURE_SUBSCRIPTION_ID}/resourceGroups/${CI_RG:=capz-ci}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${USER_IDENTITY:=cloud-provider-user-identity}
       image:
         marketplace:
           offer: capi
@@ -285,9 +293,11 @@ spec:
 
           systemctl stop kubelet
           declare -a BINARIES=("kubeadm" "kubectl" "kubelet")
+          az login --identity
           for BINARY in "$${BINARIES[@]}"; do
             echo "* installing package: $${BINARY} ${KUBE_GIT_VERSION}"
-            curl --retry 10 --retry-delay 5 "https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${JOB_NAME}/${KUBE_GIT_VERSION}/bin/linux/amd64/$${BINARY}" --output "/usr/bin/$${BINARY}"
+            az storage blob download --blob-url "https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${JOB_NAME}/${KUBE_GIT_VERSION}/bin/linux/amd64/$${BINARY}" -f "/usr/bin/$${BINARY}" --auth-mode login
+            # curl --retry 10 --retry-delay 5 "https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${JOB_NAME}/${KUBE_GIT_VERSION}/bin/linux/amd64/$${BINARY}" --output "/usr/bin/$${BINARY}"
           done
           systemctl restart kubelet
 
@@ -343,6 +353,9 @@ spec:
         runtime: containerd
         windowsServerVersion: ${WINDOWS_SERVER_VERSION:=""}
     spec:
+      identity: UserAssigned
+        userAssignedIdentities:
+          - providerID: /subscriptions/${AZURE_SUBSCRIPTION_ID}/resourceGroups/${CI_RG:=capz-ci}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${USER_IDENTITY:=cloud-provider-user-identity}
       image:
         marketplace:
           offer: capi-windows
@@ -425,10 +438,12 @@ spec:
           {
             $$binaries=@("kubeadm", "kubectl", "kubelet", "kube-proxy")
             $$ci_url="https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${JOB_NAME}/${KUBE_GIT_VERSION}/bin/windows/amd64"
+            az.exe login --identity
             foreach ( $$binary in $$binaries )
             {
               echo "downloading binary: $$ci_url/$$binary.exe"
-              curl.exe --retry 10 --retry-delay 5 "$$ci_url/$$binary.exe" --output "c:/k/$$binary.exe"
+              az.exe storage blob download --blob-url $$ci_url -f c:/k/$$binary.exe --auth-mode login
+              # curl.exe --retry 10 --retry-delay 5 "$$ci_url/$$binary.exe" --output "c:/k/$$binary.exe"
             }
           }
 

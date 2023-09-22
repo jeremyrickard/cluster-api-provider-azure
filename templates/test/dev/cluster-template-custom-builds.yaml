@@ -196,7 +196,7 @@ spec:
         lun: 0
         nameSuffix: etcddisk
       identity: UserAssigned
-        userAssignedIdentities:
+      userAssignedIdentities:
         - providerID: /subscriptions/${AZURE_SUBSCRIPTION_ID}/resourceGroups/${CI_RG:=capz-ci}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${USER_IDENTITY:=cloud-provider-user-identity}
       image:
         marketplace:
@@ -245,7 +245,7 @@ spec:
   template:
     spec:
       identity: UserAssigned
-        userAssignedIdentities:
+      userAssignedIdentities:
         - providerID: /subscriptions/${AZURE_SUBSCRIPTION_ID}/resourceGroups/${CI_RG:=capz-ci}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${USER_IDENTITY:=cloud-provider-user-identity}
       image:
         marketplace:
@@ -354,8 +354,8 @@ spec:
         windowsServerVersion: ${WINDOWS_SERVER_VERSION:=""}
     spec:
       identity: UserAssigned
-        userAssignedIdentities:
-          - providerID: /subscriptions/${AZURE_SUBSCRIPTION_ID}/resourceGroups/${CI_RG:=capz-ci}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${USER_IDENTITY:=cloud-provider-user-identity}
+      userAssignedIdentities:
+        - providerID: /subscriptions/${AZURE_SUBSCRIPTION_ID}/resourceGroups/${CI_RG:=capz-ci}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${USER_IDENTITY:=cloud-provider-user-identity}
       image:
         marketplace:
           offer: capi-windows

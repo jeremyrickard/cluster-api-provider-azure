@@ -436,6 +436,9 @@ spec:
           $$KUBE_GIT_VERSION="${KUBE_GIT_VERSION}"
           if($$KUBE_GIT_VERSION -ne "")
           {
+            # Install Azure CLI
+            Invoke-WebRequest -Uri https://azcliprod.blob.core.windows.net/msi/azure-cli-2.53.0.msi -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi'; Remove-Item .\AzureCLI.msi
+            # Install Binaries
             $$binaries=@("kubeadm", "kubectl", "kubelet", "kube-proxy")
             $$ci_url="https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${JOB_NAME}/${KUBE_GIT_VERSION}/bin/windows/amd64"
             echo "running az login via identity"

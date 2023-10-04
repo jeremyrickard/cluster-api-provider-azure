@@ -445,6 +445,8 @@ spec:
           $$KUBE_GIT_VERSION="${KUBE_GIT_VERSION}"
           if($$KUBE_GIT_VERSION -ne "")
           {
+            Write-Host "Adding AZ to path:"
+            $env:PATH +=";C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
             # Install Binaries
             $$binaries=@("kubeadm", "kubectl", "kubelet", "kube-proxy")
             $$ci_url="https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${JOB_NAME}/${KUBE_GIT_VERSION}/bin/windows/amd64"

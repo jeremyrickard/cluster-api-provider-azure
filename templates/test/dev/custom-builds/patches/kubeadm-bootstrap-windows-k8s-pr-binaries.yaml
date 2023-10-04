@@ -2,6 +2,16 @@
   path: /spec/template/spec/files/-
   value:
     content: |
+      Write-Host "Installing Azure CLI"
+      Invoke-WebRequest -Uri https://azcliprod.blob.core.windows.net/msi/azure-cli-2.53.0.msi -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi'; Remove-Item .\AzureCLI.msi
+      Write-Host "Version Azure CLI:"
+      az version
+    path: C:/install-az-cli.ps1
+    permissions: "0744"
+- op: add
+  path: /spec/template/spec/files/-
+  value:
+    content: |
       $ErrorActionPreference = 'Stop'
 
       Stop-Service kubelet -Force
@@ -9,8 +19,6 @@
       $$KUBE_GIT_VERSION="${KUBE_GIT_VERSION}"
       if($$KUBE_GIT_VERSION -ne "")
       {
-        # Install Azure CLI
-        Invoke-WebRequest -Uri https://azcliprod.blob.core.windows.net/msi/azure-cli-2.53.0.msi -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi'; Remove-Item .\AzureCLI.msi
         # Install Binaries
         $$binaries=@("kubeadm", "kubectl", "kubelet", "kube-proxy")
         $$ci_url="https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${JOB_NAME}/${KUBE_GIT_VERSION}/bin/windows/amd64"
@@ -35,6 +43,10 @@
       kube-proxy.exe --version
     path: C:/replace-pr-binaries.ps1
     permissions: "0744"
+- op: add
+  path: /spec/template/spec/preKubeadmCommands/-
+  value:
+    powershell C:/install-az-cli.ps1
 - op: add
   path: /spec/template/spec/preKubeadmCommands/-
   value:

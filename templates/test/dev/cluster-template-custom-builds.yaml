@@ -429,6 +429,13 @@ spec:
         path: C:/collect-hns-crashes.ps1
         permissions: "0744"
       - content: |
+          Write-Host "Installing Azure CLI"
+          Invoke-WebRequest -Uri https://azcliprod.blob.core.windows.net/msi/azure-cli-2.53.0.msi -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi'; Remove-Item .\AzureCLI.msi
+          Write-Host "Version Azure CLI:"
+          az version
+        path: C:/install-az-cli.ps1
+        permissions: "0744"
+      - content: |
           $ErrorActionPreference = 'Stop'
 
           Stop-Service kubelet -Force
@@ -436,8 +443,6 @@ spec:
           $$KUBE_GIT_VERSION="${KUBE_GIT_VERSION}"
           if($$KUBE_GIT_VERSION -ne "")
           {
-            # Install Azure CLI
-            Invoke-WebRequest -Uri https://azcliprod.blob.core.windows.net/msi/azure-cli-2.53.0.msi -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi'; Remove-Item .\AzureCLI.msi
             # Install Binaries
             $$binaries=@("kubeadm", "kubectl", "kubelet", "kube-proxy")
             $$ci_url="https://${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net/${JOB_NAME}/${KUBE_GIT_VERSION}/bin/windows/amd64"
@@ -479,6 +484,7 @@ spec:
       - powershell C:/create-temp-folder.ps1
       - powershell C:/replace-containerd.ps1
       - powershell C:/collect-hns-crashes.ps1
+      - powershell C:/install-az-cli.ps1
       - powershell C:/replace-pr-binaries.ps1
       users:
       - groups: Administrators

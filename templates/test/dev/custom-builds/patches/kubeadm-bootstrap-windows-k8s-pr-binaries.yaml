@@ -3,7 +3,9 @@
   value:
     content: |
       Write-Host "Installing Azure CLI"
-      Invoke-WebRequest -Uri https://azcliprod.blob.core.windows.net/msi/azure-cli-2.53.0.msi -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi'; Remove-Item .\AzureCLI.msi
+      $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://azcliprod.blob.core.windows.net/msi/azure-cli-2.53.0.msi -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; Remove-Item .\AzureCLI.msi
+      Write-Host "Adding AZ to path:"
+      $env:PATH +=";C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin"
       Write-Host "Version Azure CLI:"
       az version
     path: C:/install-az-cli.ps1

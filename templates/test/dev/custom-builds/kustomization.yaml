@@ -12,6 +12,9 @@ patchesStrategicMerge:
   - ../../../test/ci/patches/controller-manager-featuregates.yaml
 patches:
 - target:
+    kind: AzureClusterIdentity
+  path: patches/user-assigned.yaml
+- target:
     group: bootstrap.cluster.x-k8s.io
     version: v1beta1
     kind: KubeadmConfigTemplate

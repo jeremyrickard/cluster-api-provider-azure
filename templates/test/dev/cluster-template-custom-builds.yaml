@@ -535,12 +535,10 @@ metadata:
   namespace: default
 spec:
   allowedNamespaces: {}
-  clientID: ${AZURE_CLIENT_ID}
-  clientSecret:
-    name: ${AZURE_CLUSTER_IDENTITY_SECRET_NAME}
-    namespace: ${AZURE_CLUSTER_IDENTITY_SECRET_NAMESPACE}
+  clientID: ${UAMI_CLIENT_ID}
+  resourceID: /subscriptions/${AZURE_SUBSCRIPTION_ID}/resourceGroups/${CI_RG:=capz-ci}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/${USER_IDENTITY:=cloud-provider-user-identity}
   tenantID: ${AZURE_TENANT_ID}
-  type: ServicePrincipal
+  type: UserAssignedMSI
 ---
 apiVersion: addons.cluster.x-k8s.io/v1beta1
 kind: ClusterResourceSet

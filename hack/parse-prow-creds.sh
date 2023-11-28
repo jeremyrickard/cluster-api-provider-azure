@@ -25,12 +25,15 @@ parse_cred() {
 # for Prow we use the provided AZURE_CREDENTIALS file.
 # the file is expected to be in toml format.
 if [[ -n "${AZURE_CREDENTIALS:-}" ]]; then
+    echo "Setting environment variables for access to azure"
+
     AZURE_SUBSCRIPTION_ID="$(parse_cred SubscriptionID < "${AZURE_CREDENTIALS}")"
     AZURE_TENANT_ID="$(parse_cred TenantID < "${AZURE_CREDENTIALS}")"
     AZURE_CLIENT_ID="$(parse_cred ClientID < "${AZURE_CREDENTIALS}")"
     AZURE_CLIENT_SECRET="$(parse_cred ClientSecret < "${AZURE_CREDENTIALS}")"
     AZURE_STORAGE_ACCOUNT="$(parse_cred StorageAccountName < "${AZURE_CREDENTIALS}")"
     AZURE_STORAGE_KEY="$(parse_cred StorageAccountKey < "${AZURE_CREDENTIALS}")"
-
+    echo "Azure Storage Key: $AZURE_STORAGE_KEY"
+    
     export AZURE_SUBSCRIPTION_ID AZURE_TENANT_ID AZURE_CLIENT_ID AZURE_CLIENT_SECRET AZURE_STORAGE_ACCOUNT AZURE_STORAGE_KEY
 fi
